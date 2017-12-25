@@ -1,14 +1,33 @@
-from pafunctions import open_db, write_data, close_db
+#coding=utf-8
+import MySQLdb
+import os, shutil
+from pafunctions import open_db, write_data_to_dbtable, close_db, load_data_from_file, list_files_to_dbtable
 
-conn = open_db('PA', 'root', 'nopassword')
 
+connect = open_db('PA', 'root', 'nopassword')
+
+#scan folder and load files into a table
+rootfolder = 'C:\\Users\\admin\\Documents\\Files\\ITL\\Python\\python_work\\PA\\data\\'
+parent_table = 'rawpasswordfiles'
+child_table = 'filestatus'
+list_files_to_dbtable(connect, rootfolder, parent_table, child_table)
+
+connect.commit()
+
+os._exit()
+
+#load data into table passwords
+table = 'passwords'
+fields = '(account, password)'
+sourcefilepath = "C:\\Users\\admin\\Documents\\Files\\ITL\\Python\\python_work\\PA\\data\\"
+sourcefilename = "o"
+#load_data_from_file(connect, table, fields, sourcefilepath, sourcefilename)
+
+#mark the file as "loaded"
 table = 'filestatus'
-fields = 'id, idrawpasswordfile, status'
-status = 'analyzed'
-for i in range(31, 40):
-#    values = str(i) + ',' + str(i) + ", 'analyzed'"
-    values = str(i) + ', ' + str(i) + ', ' + "'" + status + "'"
-    write_data(conn, table, fields, values)
+status = 'loaded'
+fields = '(idrawpasswordfiles, status)'
+values = "(" + str(last_insert_id) + ", " + "'" + status + "')"
+write_data_to_dbtable(connect, table, fields, values, False)
 
-#cur.close()
-close_db(conn)
+close_db(connect)
