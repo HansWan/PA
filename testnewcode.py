@@ -2,11 +2,24 @@
 import MySQLdb
 import os, shutil
 import copy
-#from testpafunctions import open_db, write_data_to_dbtable, close_db, load_data_from_file, list_files_to_dbtable
-from testpafunctions import open_db, write_data_to_dbtable, close_db, fields2string, fields2percents, fields2paras, load_data_from_file, list_files_to_dbtable, check_if_record_exists, get_id, update_a_record
+from pafunctions import open_db, write_data_to_dbtable, close_db, fields2string, fields2percents, fields2paras, load_data_from_file, list_files_to_dbtable, check_if_record_exists, get_id, update_a_record
 
 connect = open_db('PA', 'root', 'nopassword')
 cur = connect.cursor()
+
+#truncate table
+sqlstring = "truncate table rawpasswordfiles"
+cur.execute(sqlstring)
+connect.commit()
+sqlstring = "truncate table filestatus"
+cur.execute(sqlstring)
+connect.commit()
+sqlstring = "truncate table passwords"
+cur.execute(sqlstring)
+connect.commit()
+
+os._exit()
+
 
 #scan folder and load files into a table
 #rootfolder = 'C:\\Users\\admin\\Documents\\Files\\ITL\\Python\\python_work\\PA\\data\\'

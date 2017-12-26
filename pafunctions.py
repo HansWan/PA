@@ -48,6 +48,9 @@ def list_files_to_dbtable(connect, rootfolder, parent_table, child_table):
         for file in files:
             table = parent_table
             fields = ['path', 'filename']
+            #some roots not include "\", need to add one
+            if root[len(root)-1] <> '\\':
+                root = root + "\\"
             values = [root, file]
             if not check_if_record_exists(connect, table, fields, values): #if no record exists then add a new one
                 returnlastid = True   #need to return last_insert_id in order to add records in child table
@@ -58,7 +61,7 @@ def list_files_to_dbtable(connect, rootfolder, parent_table, child_table):
                 status = ''
                 fields = ['idrawpasswordfiles', 'status']
                 values = [last_insert_id, status]
-                if not check_if_record_exists(connect, table, fields, values):  #if no record exists then add a new one
+                if not check_if_record_exists(connect, table, fields, values):
                     returnlastid = False #no need to return last_insert_id
                     write_data_to_dbtable(connect, table, fields, values, returnlastid)
 
@@ -90,3 +93,23 @@ def check_if_record_exists(connect, table, fields, values):
     sqlstring = "select * from " + table + " where " + fields2paras(fields)
 #    try:
     return cur.execute(sqlstring, values)
+
+def get_id(connect, table, fields, values):
+    cur = connect.cursor()
+    sqlstring = "select id from " + table + " where " + fields2paras(fields)
+    print(sqlstring)
+    cur.execute(sqlstring, values)
+#    try:
+    id = cur.fetchone()[0]
+    return id
+
+def update_a_record(connect, table, parafields, paravalues, updatedfields, updatedvalues):
+    if not check_if_record_exists(connect, table, parafields, paravalues):    #no record exists then add one
+        fields = parafields + updatedfields
+        values = paravalues + updatedvalues
+        returnlastid = False
+        write_data_to_dbtable(connect, table, fields, values, returnlastid)
+    else:
+        cur = connect.cursor()
+        sqlstring = "update " + table + " set " + fields2paras(updatedfields) + " where " + fields2paras(parafields)
+        cur.execute(sqlstring, updatedvalues + paravalues)

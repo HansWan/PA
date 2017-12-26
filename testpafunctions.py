@@ -1,6 +1,7 @@
 #coding=utf-8
 import MySQLdb
 import os, shutil
+import copy
 
 #define functions used by all modules, e.g., open database, write data into tables, etc.
 

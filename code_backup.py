@@ -48,3 +48,6 @@ def write_data_to_dbtable(connect, table, fields, values, returnlastid=False):
         last_insert_id = cur.fetchone()[0]
         return last_insert_id
     cur.close()
+
+
+truncate table 
